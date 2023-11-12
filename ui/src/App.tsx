@@ -2,6 +2,7 @@ import { createSignal } from "solid-js";
 import solidLogo from "./assets/solid.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import { dispatcher } from "./infrastructure/Dispatcher.ts";
 
 function App() {
 	const [count, setCount] = createSignal(0);
@@ -24,6 +25,12 @@ function App() {
 				</p>
 			</div>
 			<p class="read-the-docs">Click on the Vite and Solid logos to learn more</p>
+
+			<button
+				onClick={() => {
+					dispatcher.dispatch();
+				}}
+			></button>
 		</>
 	);
 }
