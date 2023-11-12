@@ -57,56 +57,76 @@ public partial class MainPage : ContentPage
 	// 	});
 	// }
 
-	record Test(string Bar);
+	public record Test(string Bar);
 
 	[JSInvokable]
-	public static void DispatchInit(JsonDocument arg)
+	public static Task<Test> DispatchInit(JsonDocument arg)
 	{
-		var test = arg.Deserialize<Test>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-		// var test = arg.Deserialize<Test>();
-		var y = 2;
+		return Task.FromResult(new Test("Hello from C#!"));
 	}
 
-	[JSInvokable]
-	public static void DispatchMessage(string messageType, string messageJson)
+	private static readonly JsonSerializerOptions s_jsonDeserializeOptions = new()
 	{
-		var y = 1;
+		PropertyNameCaseInsensitive = true
+	};
+
+	/// <summary>
+	/// Method handling or dispatching messages from WebView.
+	/// </summary>
+	/// <param name="messageType"></param>
+	/// <param name="message"></param>
+	/// <returns></returns>
+	[JSInvokable]
+	public static async Task<object> DispatchMessage(string messageType, JsonDocument message)
+	{
+		// TODO: testing delay. REMOVE!
+		await Task.Delay(500);
+
+		var type = Type.GetType(messageType);
+
+		if (type == null)
+		{
+			return new { __DispatchError = $"Type {messageType} not found." };
+		}
+
+		var test = message.Deserialize(type, s_jsonDeserializeOptions);
+		return test;
 	}
 
 	private async void OnBlazorWebViewInitialized(object? sender, BlazorWebViewInitializedEventArgs e)
 	{
-#if WINDOWS
-		var webView = ((Microsoft.UI.Xaml.Controls.WebView2)WebView.Handler.PlatformView);
-		webView.CoreWebView2.Settings.IsWebMessageEnabled = true;
-		webView.WebMessageReceived += (
-			Microsoft.UI.Xaml.Controls.WebView2 sender,
-			Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs args
-		) =>
-		{
-			//__bwv:["BeginInvokeDotNet","2","__dispatch","Dispatch",0,"[1,2,3,\"foo\",{\"bar\":\"nice\"}]"]
-			var str = args.TryGetWebMessageAsString();
-			if (str.StartsWith("__bwv:[\"BeginInvokeDotNet\""))
-			{
-				var asJson = args.WebMessageAsJson;
-				var rawMessage = JsonSerializer.Deserialize<JsonElement[]>(str.Substring("__bwv:".Length));
-				var parameters = JsonSerializer.Deserialize<JsonElement[]>(rawMessage[5].GetString());
-				var y = 1;
-			}
-			// WebView.TryDispatchAsync(async services =>
-			// {
-			// 	var runtime = services.GetService<IJSRuntime>();
-			//
-			// 	if (runtime != null)
-			// 	{
-			// 		await runtime.InvokeAsync<bool>("window.alert", "Hello from C#!");
-			// 	}
-			// });
-		};
-#elif MACCATALYST || IOS
-			((WebKit.WKWebView)Handler.PlatformView).Configuration.UserContentController.AddScriptMessageHandler(new WKHandler(), "__dispatch");
-#elif ANDROID
-#elif TIZEN
-#endif
+// #if WINDOWS
+// 		var webView = ((Microsoft.UI.Xaml.Controls.WebView2)WebView.Handler.PlatformView);
+// 		webView.CoreWebView2.Settings.IsWebMessageEnabled = true;
+// 		webView.WebMessageReceived += (
+// 			Microsoft.UI.Xaml.Controls.WebView2 sender,
+// 			Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs args
+// 		) =>
+// 		{
+// 			//__bwv:["BeginInvokeDotNet","2","__dispatch","Dispatch",0,"[1,2,3,\"foo\",{\"bar\":\"nice\"}]"]
+// 			var str = args.TryGetWebMessageAsString();
+// 			if (str.StartsWith("__bwv:[\"BeginInvokeDotNet\""))
+// 			{
+// 				var asJson = args.WebMessageAsJson;
+// 				var rawMessage = JsonSerializer.Deserialize<JsonElement[]>(str.Substring("__bwv:".Length));
+// 				var parameters = JsonSerializer.Deserialize<JsonElement[]>(rawMessage[5].GetString());
+// 				var y = 1;
+// 			}
+// 			// WebView.TryDispatchAsync(async services =>
+// 			// {
+// 			// 	var runtime = services.GetService<IJSRuntime>();
+// 			//
+// 			// 	if (runtime != null)
+// 			// 	{
+// 			// 		await runtime.InvokeAsync<bool>("window.alert", "Hello from C#!");
+// 			// 	}
+// 			// });
+// 		};
+// #elif MACCATALYST || IOS
+// 			((WebKit.WKWebView)Handler.PlatformView).Configuration.UserContentController.AddScriptMessageHandler(new WKHandler(), "__dispatch");
+// #elif ANDROID
+// #elif TIZEN
+// #endif
 
 
 

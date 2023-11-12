@@ -4,6 +4,11 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import { dispatcher } from "./infrastructure/Dispatcher.ts";
 
+// TODO: TMP! Remove!
+type Test = {
+	bar: string;
+};
+
 function App() {
 	const [count, setCount] = createSignal(0);
 
@@ -28,9 +33,13 @@ function App() {
 
 			<button
 				onClick={() => {
-					dispatcher.dispatch();
+					dispatcher.dispatch<Test>({ bar: "nice" }).then((result) => {
+						console.log("result", result);
+					});
 				}}
-			></button>
+			>
+				Try Dispatch
+			</button>
 		</>
 	);
 }
