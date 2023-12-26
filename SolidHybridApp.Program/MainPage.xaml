@@ -3,14 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SolidHybridApp.Program.MainPage">
 
-	<!-- xmlns:ejl="clr-namespace:HybridWebView;assembly=HybridWebView" -->
-	<!-- xmlns:maui="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls" -->
-	<!-- xmlns:wv="using:Microsoft.Maui.Controls.WebView;assembly=Microsoft.Maui.Controls" -->
-
-    <!-- <ejl:HybridWebView x:Name="UiHybridWebView" wv:HostPage="wwwroot/index.html" RawMessageReceived="OnHybridWebViewRawMessageReceived" /> -->
-    <!-- <ejl:HybridWebView x:Name="UiHybridWebView" HybridAssetRoot="ui" MainFile="index.html" RawMessageReceived="OnHybridWebViewRawMessageReceived" /> -->
-
-    <BlazorWebView x:Name="WebView" HostPage="wwwroot/index.html">
+    <!-- <BlazorWebView x:Name="WebView" HostPage="wwwroot/index.html"> -->
+    <BlazorWebView x:Name="WebView">
     </BlazorWebView>
 
     <!-- <WebView x:Name="WebView" Source="https://google.com"> -->

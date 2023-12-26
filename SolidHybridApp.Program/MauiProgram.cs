@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RJDev.Core.DependencyInjection.Injectable;
 
 namespace SolidHybridApp.Program;
 
@@ -16,13 +17,13 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddMauiBlazorWebView();
-		// builder.Services.AddHybridWebView();
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
 
+		builder.Services.WithInjectablesFrom(typeof(MauiProgram).Assembly);
 		builder.Services.AddTransient<MainPage>();
 
 		return builder.Build();
